@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>顶点着色器和片元着色漆</title>
+    <meta name="description" content=""/>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no"/>
+</head>
+<body>
+	<canvas width = "500" height = "500" id = "canvas"></canvas>
+    <script type="text/javascript">
+         var canvas = document.getElementById('canvas');
+         //getContext得到绘图上下文，绘图上下文的对象进行绘图，而webgl的引擎和canvas是不同的，canvas是通过2d参数来得到，而webgl是通过webgl参数得到的
+         var cxt = canvas.getContext('webgl');//
+
+         //顶点着色器,代码都是通过JavaScript字符串的形式表示出来的，而着色器的代码类似于C语言，他们都有一个主方法main，运行在webgl中
+         var vertexShaderSource = "" +
+            //变量限定字，变量限定类型， apos表示一个点的坐标，包含x，y，z的三个值
+            "attribute vec4 apos;" +
+            "void main(){" +
+            "     gl_PointSize = 20.0;" +  //gl表示的内部的变量，我们自定义的变量是不可以用gl开头的
+            "     gl_Position = apos;" + //而内部变量是不可以变的名字，而且区分大小写，区分类型，强制分号(必须用浮点)
+            "}";
+
+         //片元着色器
+         var fragmentShaderSource = "" +
+            "void main(){" +
+            "     gl_FragColor = vec4(1.0,1.0,0.0,1.0);" +
+            "}";
+
+         var program = create
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
