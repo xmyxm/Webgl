@@ -30,8 +30,37 @@
             "void main(){" +
             "     gl_FragColor = vec4(1.0,1.0,0.0,1.0);" +
             "}";
+         //把顶点着色器和片元着色器的代码写入到webgl内部并对它进行编译
+         var program = createProgram(ctx, vertexShaderSource, fragmentShaderSource);
+         var aposLocation = ctx.getAttribLocation(program, "apos");
+         var x = 0.0, y = 0.0;
+         document.addEventListener('keydown', function(event){
+            switch(event.keyCode){
+               case 37:
+                  if(x <= -0.9) return;
+                  x -= 0.1; break;
 
-         var program = create
+               case 38:
+                  if(y >= 0.9) return;
+                  y += 0.1; break;
+
+               case 39:
+                  if(x >= 0.9) return;
+                  x += 0.1; break;
+
+               case 40:
+                  if(y <= -0.9) return;
+                  y -= 0.1; break;
+            }
+            cxt.clearColor(0.0, 0.0, 1.0, 1.0);
+            ctx.vertexAttrib2f(aposLocation, x, y);
+            ctx.clear(ctx.COLOR_BUFFER_BIT);
+            ctx.drawArryays(cxt.POINTS, 0, 1);
+         })
+
+         cxt.clearColor(0.0, 0.0, 1.0, 1.0);
+         ctx.clear(ctx.COLOR_BUFFER_BIT);
+         ctx.drawArryays(cxt.POINTS, 0, 1);
     </script>
 </body>
 </html>
