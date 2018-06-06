@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>webgl 动画</title>
+</head>
+<body>
+
+<canvas id="example01" width="600" height="600"></canvas>
+<script src="../lib.js"></script>
+<script>
+
+    var fragmentShaderSource = "" +
+            "void main(){" +
+            "   gl_FragColor = vec4(1.0,0.0,0.0,0.0);" + //片元着色器设置为红色
+            "}";
+
+    //顶点着色器
+    var vertexShaderSource = "" +
+            "uniform mat4 py;" + // mat4 表示 4*4 的矩阵
+            "uniform mat4 xz;" +
+            "attribute vec4 pos;" +
+            "void main(){" +
+            "   gl_Position = py * xz * pos;" + // 平移 * 旋转 * 坐标
+            "}" +
+            "";
+
+    //得到上下文对象
+    var cxt = example01.getContext('webgl');
+    var data = new Float32Array([
+        0.0, .2,
+        -0.2, -.2,
+        .2, -.2
+    ]);
+
+    function initShader(gl, vertexShaderSource, fragmentShaderSource) {
+        //编译着色器
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+        gl.shaderSource(vertexShader, vertexShaderSource);
+        gl.shaderSource(fragmentShader, fragmentShaderSource);
+
+        gl.compileShader(vertexShader);
+        gl.compileShader(fragmentShader);
+
+        var program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+
+        gl.linkProgram(program);
+
+        gl.useProgram(program);
+        console.log(gl.getShaderInfoLog(fragmentShader));
+        return program;
+    }
+
+    var program = initShader(cxt, vertexShaderSource, fragmentShaderSource);
+    var sinB,cosB;
+    var tx = 0.0;// x轴 默认偏移量
+    var ty = 0.0;// y轴 默认偏移量
+    var ANGLE = 30;
+    //获取坐标点
+    var posLocation = cxt.getAttribLocation(program, 'pos');
+    //创建缓冲区对象,它是WebGL系统中的一块内存区域，它可以一次性向着色器传入多个顶点的数据，然后将这些数据保存在其中，供顶点着色器使用。
+    var buffer = cxt.createBuffer();
+    //将缓冲区对象绑定到目标
+    cxt.bindBuffer(cxt.ARRAY_BUFFER, buffer);
+    //向缓冲区写入数据, data表示写入缓存区对象的数据（类型化数组,类型化数组是WEBGL为了优化性能引入的一种特殊的数组）,第三个参数有3种
+    //gl.STATIC_DRAW：表示只会向缓存区对象写入一次数据，但需要绘制很多次；
+    //gl.STREAM_DRAW：表示只会向缓存区对象写入一次数据，然后绘制若干次；
+    //gl.DYNAMIC_DRAW：表示会向缓存区对象多次写入数据，并绘制很多次；
+    cxt.bufferData(cxt.ARRAY_BUFFER, data, cxt.STATIC_DRAW);
+    //将缓冲区对象分配给 posLocation 变量
+    // 第一个参数：指定待分配attribute变量的存储位置
+    // 第二个参数：指定缓存区中每个顶点的分量个数（1~4）
+    // 第三个参数：数据类型，类型有，gl.UNSIGNED_BYTE无符号字节，gl.SHORT短整数，gl.UNSIGNED_SHORT无符号短整数，gl.INT整型，gl.UNSIGNED_INT无符号整型，gl.FLOAT浮点型。
+    // 第四个参数：表示是否将非浮点型的数据归到[0,1][-1,1]区间
+    // 第五个参数：相邻两个顶点的字节数。默认为0
+    // 第六个参数：表示缓存区对象的偏移量（以字节为单位），就是attribute变量从缓冲区中的何处开始存储。
+    cxt.vertexAttribPointer(posLocation, 2, cxt.FLOAT, false, 0, 0);
+    //开启attribute变量,将缓冲区对象分配给posLocation变量
+    cxt.enableVertexAttribArray(posLocation);
+
+
+
+    (function run(){
+        var t = Math.PI * ANGLE/180;
+        sinB = Math.sin(t);
+        cosB = Math.cos(t);
+
+        //选择矩阵公式（推导出来的，需要知道线性代数的知识）
+        var xz = new Float32Array([
+            cosB, sinB, 0.0, 0.0,
+            -sinB, cosB, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        ]);
+
+        tx += .005;
+        ty += .005;
+
+        ANGLE += 1;
+
+        //平移矩阵 (会用就可以了)
+        var py = new Float32Array([
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            tx, ty, 0.0, 1.0
+        ]);
+
+
+        var xzLocation = cxt.getUniformLocation(program,'xz');
+        var pyLocation = cxt.getUniformLocation(program,'py');
+
+        cxt.uniformMatrix4fv(xzLocation,false,xz);
+        cxt.uniformMatrix4fv(pyLocation,false,py);
+
+        //设定背景色彩
+        cxt.clearColor(.2, .2, .2, 1.0);
+        //清除背景色
+        cxt.clear(cxt.COLOR_BUFFER_BIT);
+        //drawArrays从向量数组中绘制图元
+        //参数一： 类型，指定绘制图元的方式，
+        //如：绘制一系列点;  绘制一系列线段;   绘制一个线圈,即，绘制一系列线段，上一点连接下一点，并且最后一点与第一个点相连;  绘制一个三角扇; 绘制一系列三角形,每三个点作为顶点
+        //参数二： 指定从哪个点开始绘制
+        //参数三： 指定绘制需要使用到多少个点
+        cxt.drawArrays(cxt.TRIANGLES, 0, 3);
+        setTimeout(run,100);
+    })()
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
