@@ -12,7 +12,7 @@
 
     var fragmentShaderSource = "" +
             "void main(){" +
-            "   gl_FragColor = vec4(1.0,0.0,0.0,0.0);" + //片元着色器设置为红色
+            "   gl_FragColor = vec4(1.0,0.0,0.0,0.0);" + //片元着色器设置为红色, 红 黄 蓝 透明度
             "}";
 
     //顶点着色器
@@ -56,6 +56,7 @@
         return program;
     }
 
+    //上下文，顶点着色器，片元着色器
     var program = initShader(cxt, vertexShaderSource, fragmentShaderSource);
     var sinB,cosB;
     var tx = 0.0;// x轴 默认偏移量

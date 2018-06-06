@@ -32,6 +32,7 @@
             "}";
          //把顶点着色器和片元着色器的代码写入到webgl内部并对它进行编译
          var program = createProgram(ctx, vertexShaderSource, fragmentShaderSource);
+         //通过上下文拿到顶点着色器
          var aposLocation = ctx.getAttribLocation(program, "apos");
          var x = 0.0, y = 0.0;
          document.addEventListener('keydown', function(event){
