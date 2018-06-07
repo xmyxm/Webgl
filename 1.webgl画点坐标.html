@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Webgl画点坐标</title>
+    <script type="text/javascript" src="./createprogram.js"></script>
+</head>
+
+<body>
+    <canvas id="webgl" width="500" height="500"></canvas>
+    <script>
+    //getContext得到绘图上下文，绘图上下文的对象进行绘图，而webgl的引擎和canvas是不同的，canvas是通过2d参数来得到，而webgl是通过webgl参数得到的
+    var canvasElement = document.getElementById('webgl');
+    var context = canvasElement.getContext('webgl');
+    //顶点着色器,代码都是通过JavaScript字符串的形式表示出来的，而着色器的代码类似于C语言，他们都有一个主方法main，运行在webgl中
+    var vertexShaderSource = '' +
+        //变量限定字，变量限定类型， apos表示一个点的坐标，包含x，y，z的三个值
+        'attribute vec4 apos;' +
+        'void main(){' +
+        '   gl_PointSize = 20.0;' + //gl表示的内部的变量，我们自定义的变量是不可以用gl开头的
+        '   gl_Position = apos;' + //而内部变量是不可以变的名字，而且区分大小写，区分类型，强制分号(必须用浮点)
+        '}';
+    //片元着色器
+    var fragShaderSource = '' +
+        'void main(){' +
+        '   gl_FragColor = vec4(1.0,0.0,0.0,1.0);' + // gl_FragColor 系统带的变量，表示一个片源色彩，一个片源代表一个像素
+        '}';
+    //把顶点着色器和片元着色器的代码写入到webgl内部并对它进行编译
+    var program = createProgram(context, vertexShaderSource, fragShaderSource);
+    //通过上下文拿到顶点着色器
+    var aposLocation = context.getAttribLocation(program, 'apos');
+
+    var x = 0.0;
+    var y = 0.0;
+
+    context.clearColor(0.2, 0.3, 0.5, 1.0);
+    context.clear(context.COLOR_BUFFER_BIT);
+
+    for (var i = 0, j = 0.1; i < 10; i++) {
+        x += j;
+        y += j;
+        context.vertexAttrib4f(aposLocation, x, y, 0.0, 1.0);
+        context.drawArrays(context.POINTS, 0, 1);
+    }
+    </script>
+</body>
+
+</html>

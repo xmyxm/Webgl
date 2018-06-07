@@ -2,12 +2,12 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>webgl 动画</title>
+    <title>webgl动画</title>
+    <script type="text/javascript" src="./createprogram.js"></script>
 </head>
 <body>
 
 <canvas id="example01" width="600" height="600"></canvas>
-<script src="../lib.js"></script>
 <script>
 
     var fragmentShaderSource = "" +
@@ -57,7 +57,7 @@
     }
 
     //上下文，顶点着色器，片元着色器
-    var program = initShader(cxt, vertexShaderSource, fragmentShaderSource);
+    var program = createProgram(cxt, vertexShaderSource, fragmentShaderSource);
     var sinB,cosB;
     var tx = 0.0;// x轴 默认偏移量
     var ty = 0.0;// y轴 默认偏移量
