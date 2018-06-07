@@ -9,7 +9,7 @@ function createProgram(gl,vertexShaderSource,fragmentShaderSource){
     //完成着色器（shader）的编译。 此时 WebGLShader 仍不是可用的形式，他需要被添加到一个 WebGLProgram里.
     gl.compileShader(vertexShader);
     gl.compileShader(fragmentShader);
-    //WebGLProgram 是 WebGL API 的一部分，它由两个WebGLShaders （webgl着色器）组成，分别为顶点着色器和片元着色器（两种着色器都是由GLSL语言来写的），WebGLProgram 负责将两个着色器使用在一个webgl程序上
+    //创建和初始化一个 WebGLProgram 对象， 这个对象由两个编译过后的 WebGLShader 组成 - 顶点着色器和片段着色器
     var program = gl.createProgram();
     //往 WebGLProgram 添加一个片段或者顶点着色器
     gl.attachShader(program,vertexShader);
@@ -18,6 +18,7 @@ function createProgram(gl,vertexShaderSource,fragmentShaderSource){
     gl.linkProgram(program);
     //将定义好的WebGLProgram 对象添加到当前的渲染状态中
     gl.useProgram(program);
+    //调试代码，报错打印 片元着色器 fragmentShader 错误细节
     console.log(gl.getShaderInfoLog(fragmentShader));
     return program;
 }

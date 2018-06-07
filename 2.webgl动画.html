@@ -27,34 +27,12 @@
 
     //得到上下文对象
     var cxt = example01.getContext('webgl');
+    //绘制顶点坐标系，三个顶点
     var data = new Float32Array([
         0.0, .2,
         -0.2, -.2,
         .2, -.2
     ]);
-
-    function initShader(gl, vertexShaderSource, fragmentShaderSource) {
-        //编译着色器
-        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-
-        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-
-        gl.shaderSource(vertexShader, vertexShaderSource);
-        gl.shaderSource(fragmentShader, fragmentShaderSource);
-
-        gl.compileShader(vertexShader);
-        gl.compileShader(fragmentShader);
-
-        var program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-
-        gl.linkProgram(program);
-
-        gl.useProgram(program);
-        console.log(gl.getShaderInfoLog(fragmentShader));
-        return program;
-    }
 
     //上下文，顶点着色器，片元着色器
     var program = createProgram(cxt, vertexShaderSource, fragmentShaderSource);
@@ -62,7 +40,7 @@
     var tx = 0.0;// x轴 默认偏移量
     var ty = 0.0;// y轴 默认偏移量
     var ANGLE = 30;
-    //获取坐标点
+    //返回了给定WebGLProgram对象中某属性的下标指向位置
     var posLocation = cxt.getAttribLocation(program, 'pos');
     //创建缓冲区对象,它是WebGL系统中的一块内存区域，它可以一次性向着色器传入多个顶点的数据，然后将这些数据保存在其中，供顶点着色器使用。
     var buffer = cxt.createBuffer();
@@ -112,10 +90,11 @@
             tx, ty, 0.0, 1.0
         ]);
 
-
+        //获取指定名称uniform变量的存储地址
         var xzLocation = cxt.getUniformLocation(program,'xz');
         var pyLocation = cxt.getUniformLocation(program,'py');
 
+        //开始设值
         cxt.uniformMatrix4fv(xzLocation,false,xz);
         cxt.uniformMatrix4fv(pyLocation,false,py);
 

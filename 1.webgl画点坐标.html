@@ -28,19 +28,22 @@
         '}';
     //把顶点着色器和片元着色器的代码写入到webgl内部并对它进行编译
     var program = createProgram(context, vertexShaderSource, fragShaderSource);
-    //通过上下文拿到顶点着色器
+    //返回了给定WebGLProgram对象中某属性的下标指向位置, 第一个参数 program 对象， 第二个参数 需要获取下标指向位置的 属性参数名 
     var aposLocation = context.getAttribLocation(program, 'apos');
 
     var x = 0.0;
     var y = 0.0;
-
+    //设置清空颜色缓冲时的颜色值
     context.clearColor(0.2, 0.3, 0.5, 1.0);
+    // 方法使用预设值来清空缓冲
     context.clear(context.COLOR_BUFFER_BIT);
 
     for (var i = 0, j = 0.1; i < 10; i++) {
         x += j;
         y += j;
+        //可以为顶点attibute变量赋值，vertexAttrib接的数字表示有几个参数，最多4个参数，即4f，传递一个参数即1f, f后面再再加一个v表示参数是数组类型的，然后数组的值对应的个数会用1-4f表示
         context.vertexAttrib4f(aposLocation, x, y, 0.0, 1.0);
+        //开始绘制辣
         context.drawArrays(context.POINTS, 0, 1);
     }
     </script>
